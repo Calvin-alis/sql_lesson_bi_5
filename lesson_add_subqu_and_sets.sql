@@ -96,20 +96,30 @@ SELECT COUNT( DISTINCT(emp_no) ) FROM salaries WHERE salary > 150000;
 		WHERE - (1 -  колона або  n -  значення)
 		FROM/JOIN - (n - колонок, m - значеннь) + потрібно вказати Alias 
 */
+SELECT ee.emp_no, ee.first_name, ee.last_name
+ FROM employees AS ee 
+ WHERE ee.emp_no IN (
+											SELECT emp_no FROM employees WHERE gender = 'F'
+										);
+
+
+SELECT emp_no FROM employees.salaries WHERE salary >= 150000;
 
 SELECT ee.emp_no, ee.first_name, ee.last_name
- FROM employees AS ee
+ FROM employees.employees AS ee
 WHERE ee.emp_no IN ( SELECT emp_no FROM employees.salaries WHERE salary >= 150000);
 
 
 SELECT ee.emp_no, ee.first_name, ee.last_name
- FROM employees AS ee
- INNER JOIN ( SELECT DISTINCT emp_no FROM employees.salaries 	WHERE salary >= 150000) AS es USING(emp_no);
+ FROM employees.employees AS ee
+ INNER JOIN ( SELECT DISTINCT emp_no FROM employees.salaries 	WHERE salary >= 150000)  AS es USING(emp_no);
  
  
 # Task 1. Вивезти всіх співробітників які були менеджерами(where, join)
 SELECT * FROM employees.dept_manager;
 
+
+# Task 1. Вивезти всіх співробітників які були менеджерами(where)
 SELECT ee.emp_no, ee.first_name, ee.last_name FROM employees.employees AS ee 
 WHERE ee.emp_no IN (SELECT emp_no FROM dept_manager);
 
@@ -134,12 +144,13 @@ SELECT * FROM employees.salaries
 WHERE salary > round(63801.4823, 2);
 
 
-
 SELECT emp_no, salary FROM employees.salaries AS ee
 WHERE ee.salary > ( SELECT AVG(salary) FROM employees.salaries);
 
-# Task *.1: У кого зп середня зп більше? (два запити)
+# Task *.1: У кого зп середня  більше(по gender)? (два запити)
 # Task *. Вивезти номер співробітників чоловіків у яких ЗП  більше ніж середня ЗП серед жінок
+
+
 
 # Task *.1 
 
@@ -154,12 +165,47 @@ SELECT * FROM employees.employees;
     Step 3: вивезти чоловіків
     Step 4: порівняти
 */
-
+ SELECT emp_no FROM employees WHERE gender = 'F' ;
+ 
 SELECT AVG(salary) FROM employees.salaries
 WHERE emp_no IN ( SELECT emp_no FROM employees WHERE gender = 'F' );
 
 SELECT AVG(salary) FROM employees.salaries
 WHERE emp_no IN ( SELECT emp_no FROM employees WHERE gender = 'M');
+
+# Поглянути у памяті 
+SELECT
+(SELECT AVG(salary) 
+FROM employees.salaries
+WHERE emp_no IN 
+	( SELECT emp_no 
+    FROM employees 
+    WHERE gender = 'F' )) 
+-
+(SELECT AVG(salary) 
+FROM employees.salaries
+WHERE emp_no IN 
+	( SELECT emp_no 
+    FROM employees 
+    WHERE gender = 'M'));
+    
+    
+# Варіант студента 
+SELECT (SELECT AVG(salary) FROM employees.salaries
+WHERE emp_no IN 
+									( SELECT emp_no FROM employees WHERE gender = 'F' )) - 
+                                    ( SELECT AVG(salary) FROM employees.salaries 
+                                    WHERE emp_no IN 
+									( SELECT emp_no FROM employees WHERE gender = 'M')
+                                    );
+                                    
+
+SELECT 'M' AS gender, AVG(salary) as salary FROM employees.salaries 
+WHERE emp_no IN ( SELECT emp_no FROM employees WHERE gender = 'M' )
+UNION 
+SELECT 'F', AVG(salary) FROM employees.salaries
+WHERE emp_no IN ( SELECT emp_no FROM employees WHERE gender = 'F' );
+
 
 SELECT DISTINCT emp_no 
 FROM employees.salaries
