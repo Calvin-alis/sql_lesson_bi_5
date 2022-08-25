@@ -60,7 +60,7 @@ FROM employees
 WHERE last_Name like 'Ranta';
 
 
-SHOW FULL PROCESSLIST; 
+#SHOW FULL PROCESSLIST; 
 #KILL 11;
 
 #select 0.144 / 0.0017;
@@ -179,9 +179,12 @@ CREATE TABLE IF NOT EXISTS contacts (
 	email 						VARCHAR(100) 							NOT NULL, 						UNIQUE KEY unique_email (email)
 );
 
-select * from contacts;
+explain select * from contacts;
+
 
 SHOW INDEXES FROM contacts;
+
+
 
 INSERT INTO contacts(first_name,last_name,phone,email)
 VALUES('John','Doe','(408)-999-9765','john.doe@mysqltutorial.org');
@@ -189,4 +192,36 @@ VALUES('John','Doe','(408)-999-9765','john.doe@mysqltutorial.org');
 
 INSERT INTO contacts(first_name,last_name,phone,email)
 VALUES('Johny','Doe','(408)-999-4321','a');
+
+
+EXPLAIN 
+SELECT *
+FROM employees.employees
+WHERE last_name LIKE 'Adam';
+
+EXPLAIN 
+SELECT *
+FROM employees.employees
+WHERE last_name LIKE '_dam'; # відключає індекс 
+
+
+EXPLAIN 
+SELECT *
+FROM employees.employees
+WHERE last_name  LIKE LOWER('Adam');
+
+
+CREATE TABLE complex_talbe (
+c1 	INT PRIMARY KEY,
+c2	FLOAT,
+c3 	INT,
+c4  	INT,
+INDEX complex_index (c2,c3,c4)
+);
+
+CREATE INDEX index_name
+ON table_name(c2,c3,c4);
+
+
+select * from employees;
 
